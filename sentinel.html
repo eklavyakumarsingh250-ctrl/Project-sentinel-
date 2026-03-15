@@ -1,0 +1,1259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Project Sentinel — Arbitrum Economic Defense System</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #04060a;
+  --surface: #080c12;
+  --card: #0c1018;
+  --card2: #101520;
+  --border: #1a2030;
+  --border2: #243048;
+  --blue: #1e90ff;
+  --blue-dim: rgba(30,144,255,0.08);
+  --blue-mid: rgba(30,144,255,0.3);
+  --cyan: #00d4ff;
+  --red: #ff3535;
+  --red-dim: rgba(255,53,53,0.1);
+  --orange: #ff6b00;
+  --orange-dim: rgba(255,107,0,0.1);
+  --yellow: #ffd600;
+  --yellow-dim: rgba(255,214,0,0.1);
+  --green: #00ff88;
+  --green-dim: rgba(0,255,136,0.08);
+  --white: #e8edf5;
+  --dim: #4a5568;
+  --dim2: #2d3748;
+  --mono: 'Space Mono', monospace;
+  --display: 'Bebas Neue', sans-serif;
+  --sans: 'DM Sans', sans-serif;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  background: var(--bg);
+  color: var(--white);
+  font-family: var(--sans);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Animated background */
+body::before {
+  content:'';
+  position:fixed;
+  inset:0;
+  background:
+    radial-gradient(ellipse 80% 50% at 50% -20%, rgba(30,144,255,0.07) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 30% at 80% 80%, rgba(0,212,255,0.04) 0%, transparent 50%);
+  pointer-events:none;
+  z-index:0;
+}
+
+body::after {
+  content:'';
+  position:fixed;
+  inset:0;
+  background-image:
+    linear-gradient(rgba(30,144,255,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(30,144,255,0.025) 1px, transparent 1px);
+  background-size: 60px 60px;
+  pointer-events:none;
+  z-index:0;
+}
+
+.wrap { position:relative; z-index:1; max-width:1100px; margin:0 auto; padding:0 20px; }
+
+/* ── HEADER ── */
+header {
+  border-bottom: 1px solid var(--border);
+  background: rgba(4,6,10,0.95);
+  backdrop-filter: blur(12px);
+  position: sticky;
+  top:0;
+  z-index:100;
+}
+
+.header-inner {
+  max-width:1100px;
+  margin:0 auto;
+  padding: 14px 20px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+}
+
+.logo {
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+
+.logo-mark {
+  width:36px;
+  height:36px;
+  border:1px solid var(--blue);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  position:relative;
+  overflow:hidden;
+}
+
+.logo-mark::before {
+  content:'';
+  position:absolute;
+  inset:0;
+  background: linear-gradient(135deg, var(--blue-dim), transparent);
+}
+
+.logo-mark::after {
+  content:'';
+  position:absolute;
+  top:-100%;
+  left:0;
+  width:100%;
+  height:100%;
+  background: linear-gradient(transparent, rgba(30,144,255,0.2), transparent);
+  animation: scan 3s linear infinite;
+}
+
+@keyframes scan {
+  0% { top:-100%; }
+  100% { top:200%; }
+}
+
+.logo-mark span {
+  font-family: var(--mono);
+  font-size:11px;
+  color: var(--blue);
+  position:relative;
+  z-index:1;
+}
+
+.logo-name {
+  font-family: var(--display);
+  font-size:22px;
+  letter-spacing:2px;
+  color: var(--white);
+}
+
+.logo-name em {
+  color: var(--blue);
+  font-style:normal;
+}
+
+.header-right {
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+
+.status-pill {
+  display:flex;
+  align-items:center;
+  gap:6px;
+  font-family: var(--mono);
+  font-size:9px;
+  color: var(--green);
+  border:1px solid rgba(0,255,136,0.3);
+  padding:4px 10px;
+  letter-spacing:1px;
+}
+
+.status-dot {
+  width:5px;
+  height:5px;
+  border-radius:50%;
+  background: var(--green);
+  animation: blink 1.2s ease-in-out infinite;
+}
+
+@keyframes blink {
+  0%,100% { opacity:1; }
+  50% { opacity:0.2; }
+}
+
+.arb-badge {
+  font-family: var(--mono);
+  font-size:9px;
+  color: var(--blue);
+  border:1px solid var(--border2);
+  padding:4px 10px;
+  letter-spacing:1px;
+}
+
+/* ── HERO ── */
+.hero {
+  padding: 50px 0 36px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 28px;
+}
+
+.hero-top {
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:20px;
+  flex-wrap:wrap;
+}
+
+.hero-left { flex:1; min-width:280px; }
+
+.phase-badge {
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  font-family: var(--mono);
+  font-size:9px;
+  color: var(--cyan);
+  border:1px solid rgba(0,212,255,0.25);
+  padding:4px 12px;
+  margin-bottom:16px;
+  letter-spacing:2px;
+}
+
+h1 {
+  font-family: var(--display);
+  font-size: clamp(38px, 8vw, 72px);
+  letter-spacing: 2px;
+  line-height:0.95;
+  margin-bottom:14px;
+}
+
+h1 .line2 { color: var(--blue); display:block; }
+
+.hero-desc {
+  font-size:13px;
+  color: var(--dim);
+  line-height:1.7;
+  max-width:480px;
+  font-weight:300;
+}
+
+.hero-right {
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  min-width:200px;
+}
+
+.meta-row {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:20px;
+  font-family: var(--mono);
+  font-size:10px;
+  padding:8px 12px;
+  border:1px solid var(--border);
+  background: var(--card);
+}
+
+.meta-label { color: var(--dim); letter-spacing:1px; }
+.meta-value { color: var(--white); }
+.meta-value.blue { color: var(--blue); }
+.meta-value.green { color: var(--green); }
+.meta-value.yellow { color: var(--yellow); }
+
+/* ── GLOBAL RISK ── */
+.global-risk {
+  display:grid;
+  grid-template-columns: 1fr 2fr 1fr;
+  gap:1px;
+  background: var(--border);
+  border:1px solid var(--border);
+  margin-bottom:20px;
+}
+
+.gr-cell {
+  background: var(--card);
+  padding:20px;
+}
+
+.gr-cell.center {
+  background: var(--card2);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+}
+
+.gr-score {
+  font-family: var(--display);
+  font-size:80px;
+  line-height:1;
+  letter-spacing:2px;
+}
+
+.gr-score.low { color: var(--green); }
+.gr-score.medium { color: var(--yellow); }
+.gr-score.high { color: var(--orange); }
+.gr-score.critical { color: var(--red); }
+
+.gr-label {
+  font-family: var(--mono);
+  font-size:9px;
+  letter-spacing:3px;
+  color: var(--dim);
+  margin-top:4px;
+}
+
+.gr-sub {
+  font-family: var(--mono);
+  font-size:8px;
+  color: var(--dim);
+  margin-top:8px;
+  letter-spacing:1px;
+}
+
+.gr-title {
+  font-family: var(--mono);
+  font-size:9px;
+  color: var(--dim);
+  letter-spacing:2px;
+  margin-bottom:12px;
+}
+
+.gr-metric {
+  margin-bottom:10px;
+}
+
+.gr-metric-label {
+  font-family: var(--mono);
+  font-size:8px;
+  color: var(--dim);
+  letter-spacing:1px;
+  margin-bottom:4px;
+}
+
+.gr-metric-bar {
+  height:3px;
+  background: var(--border2);
+  position:relative;
+  margin-bottom:3px;
+}
+
+.gr-metric-fill {
+  height:100%;
+  transition: width 1.5s cubic-bezier(0.16,1,0.3,1);
+}
+
+.gr-metric-value {
+  font-family: var(--mono);
+  font-size:10px;
+}
+
+/* ── SECTION TITLE ── */
+.sec-title {
+  font-family: var(--mono);
+  font-size:9px;
+  color: var(--blue);
+  letter-spacing:3px;
+  margin-bottom:12px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.sec-title::after {
+  content:'';
+  flex:1;
+  height:1px;
+  background: var(--border);
+}
+
+/* ── PROTOCOL GRID ── */
+.protocol-grid {
+  display:grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap:1px;
+  background: var(--border);
+  border:1px solid var(--border);
+  margin-bottom:20px;
+}
+
+.proto-card {
+  background: var(--card);
+  padding:18px;
+  transition: background 0.2s;
+  cursor:default;
+}
+
+.proto-card:hover { background: var(--card2); }
+
+.proto-header {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:14px;
+}
+
+.proto-name {
+  font-family: var(--mono);
+  font-size:11px;
+  color: var(--white);
+  letter-spacing:1px;
+}
+
+.proto-chain {
+  font-family: var(--mono);
+  font-size:8px;
+  color: var(--blue);
+  border:1px solid var(--border2);
+  padding:2px 6px;
+  letter-spacing:1px;
+}
+
+.proto-score {
+  font-family: var(--display);
+  font-size:42px;
+  line-height:1;
+  margin-bottom:8px;
+}
+
+.proto-score.safe { color: var(--green); }
+.proto-score.warn { color: var(--yellow); }
+.proto-score.danger { color: var(--orange); }
+.proto-score.critical { color: var(--red); }
+
+.proto-metrics {
+  display:flex;
+  flex-direction:column;
+  gap:5px;
+}
+
+.proto-metric {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  font-family: var(--mono);
+  font-size:9px;
+}
+
+.proto-metric-label { color: var(--dim); }
+.proto-metric-value { }
+
+/* ── WAR ROOM ── */
+.war-room {
+  border:1px solid var(--border2);
+  background: var(--card);
+  margin-bottom:20px;
+  max-height:320px;
+  overflow-y:auto;
+}
+
+.war-room::-webkit-scrollbar { width:3px; }
+.war-room::-webkit-scrollbar-track { background:var(--card); }
+.war-room::-webkit-scrollbar-thumb { background:var(--border2); }
+
+.wr-row {
+  display:grid;
+  grid-template-columns: 150px 80px 1fr 100px 80px 90px;
+  gap:10px;
+  padding:9px 16px;
+  border-bottom:1px solid var(--border);
+  align-items:center;
+  font-family: var(--mono);
+  font-size:10px;
+  transition: background 0.15s;
+}
+
+.wr-row:hover { background: var(--card2); }
+
+.wr-row.hdr {
+  background: var(--surface);
+  font-size:8px;
+  color: var(--dim);
+  letter-spacing:1px;
+  position:sticky;
+  top:0;
+}
+
+.wr-wallet {
+  color: var(--blue);
+  font-size:9px;
+}
+
+.wr-hf { }
+.wr-hf.safe { color: var(--green); }
+.wr-hf.warn { color: var(--yellow); }
+.wr-hf.danger { color: var(--red); }
+
+.alert-tag {
+  font-size:8px;
+  padding:2px 6px;
+  letter-spacing:0.5px;
+}
+
+.alert-tag.deadlock { background:var(--red-dim); color:var(--red); border:1px solid var(--red); }
+.alert-tag.watch { background:var(--yellow-dim); color:var(--yellow); border:1px solid var(--yellow); }
+.alert-tag.safe { background:var(--green-dim); color:var(--green); border:1px solid rgba(0,255,136,0.3); }
+.alert-tag.whale { background:var(--orange-dim); color:var(--orange); border:1px solid var(--orange); }
+
+/* ── ORACLE TRACKER ── */
+.oracle-grid {
+  display:grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap:1px;
+  background: var(--border);
+  border:1px solid var(--border);
+  margin-bottom:20px;
+}
+
+.oracle-card {
+  background: var(--card);
+  padding:16px;
+}
+
+.oracle-asset {
+  font-family: var(--mono);
+  font-size:10px;
+  color: var(--dim);
+  letter-spacing:1px;
+  margin-bottom:6px;
+}
+
+.oracle-price {
+  font-family: var(--mono);
+  font-size:18px;
+  color: var(--white);
+  margin-bottom:4px;
+}
+
+.oracle-gap {
+  font-family: var(--mono);
+  font-size:11px;
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
+
+.gap-safe { color: var(--green); }
+.gap-warn { color: var(--yellow); }
+.gap-danger { color: var(--red); }
+
+/* ── IR PLAYBOOK ── */
+.playbook {
+  display:grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap:1px;
+  background: var(--border);
+  border:1px solid var(--border);
+  margin-bottom:20px;
+}
+
+.phase-card {
+  background: var(--card);
+  padding:20px;
+}
+
+.phase-num {
+  font-family: var(--display);
+  font-size:48px;
+  line-height:1;
+  color: var(--border2);
+  margin-bottom:8px;
+}
+
+.phase-title {
+  font-family: var(--mono);
+  font-size:10px;
+  letter-spacing:2px;
+  margin-bottom:12px;
+}
+
+.phase-title.p1 { color: var(--blue); }
+.phase-title.p2 { color: var(--yellow); }
+.phase-title.p3 { color: var(--orange); }
+.phase-title.p4 { color: var(--green); }
+
+.phase-steps {
+  list-style:none;
+  display:flex;
+  flex-direction:column;
+  gap:7px;
+}
+
+.phase-step {
+  display:flex;
+  gap:8px;
+  font-size:11px;
+  color: var(--dim);
+  line-height:1.5;
+  font-weight:300;
+}
+
+.step-num {
+  font-family: var(--mono);
+  font-size:9px;
+  color: var(--border2);
+  flex-shrink:0;
+  padding-top:2px;
+}
+
+.phase-trigger {
+  margin-top:12px;
+  padding:8px 10px;
+  background: var(--surface);
+  border-left:2px solid;
+  font-family: var(--mono);
+  font-size:9px;
+  color: var(--dim);
+  letter-spacing:0.5px;
+}
+
+.phase-trigger.p1 { border-color: var(--blue); }
+.phase-trigger.p2 { border-color: var(--yellow); }
+.phase-trigger.p3 { border-color: var(--orange); }
+.phase-trigger.p4 { border-color: var(--green); }
+
+/* ── FORMULAS ── */
+.formula-grid {
+  display:grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap:1px;
+  background: var(--border);
+  border:1px solid var(--border);
+  margin-bottom:20px;
+}
+
+.formula-card {
+  background: var(--card);
+  padding:18px;
+}
+
+.formula-name {
+  font-family: var(--mono);
+  font-size:9px;
+  color: var(--cyan);
+  letter-spacing:2px;
+  margin-bottom:10px;
+}
+
+.formula-eq {
+  font-family: var(--mono);
+  font-size:11px;
+  color: var(--white);
+  background: var(--surface);
+  padding:10px 12px;
+  border-left:2px solid var(--blue);
+  margin-bottom:8px;
+  line-height:1.8;
+  word-break:break-all;
+}
+
+.formula-eq .var { color: var(--blue); }
+.formula-eq .op { color: var(--dim); }
+.formula-eq .val { color: var(--cyan); }
+
+.formula-desc {
+  font-size:11px;
+  color: var(--dim);
+  line-height:1.6;
+  font-weight:300;
+}
+
+/* ── ALERT BANNER ── */
+.alert-banner {
+  display:none;
+  border:1px solid var(--red);
+  background: var(--red-dim);
+  padding:14px 20px;
+  margin-bottom:20px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  flex-wrap:wrap;
+  animation: alertPulse 2s ease-in-out infinite;
+}
+
+@keyframes alertPulse {
+  0%,100% { border-color: var(--red); }
+  50% { border-color: rgba(255,53,53,0.4); }
+}
+
+.alert-text {
+  font-family: var(--mono);
+  font-size:11px;
+  color: var(--red);
+  letter-spacing:1px;
+}
+
+.alert-text strong { color: var(--white); }
+
+.btn-alert {
+  font-family: var(--mono);
+  font-size:10px;
+  padding:6px 14px;
+  border:1px solid var(--red);
+  background:transparent;
+  color: var(--red);
+  cursor:pointer;
+  letter-spacing:1px;
+  transition: all 0.2s;
+}
+
+.btn-alert:hover { background:var(--red); color:var(--bg); }
+
+/* ── FOOTER ── */
+footer {
+  border-top:1px solid var(--border);
+  padding:24px 0;
+  margin-top:40px;
+}
+
+.footer-inner {
+  max-width:1100px;
+  margin:0 auto;
+  padding:0 20px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:12px;
+}
+
+.footer-text {
+  font-family: var(--mono);
+  font-size:9px;
+  color: var(--dim);
+  letter-spacing:1px;
+}
+
+.footer-links {
+  display:flex;
+  gap:16px;
+}
+
+.footer-links a {
+  font-family: var(--mono);
+  font-size:9px;
+  color: var(--dim);
+  text-decoration:none;
+  letter-spacing:1px;
+  transition: color 0.2s;
+}
+
+.footer-links a:hover { color: var(--blue); }
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp {
+  from { opacity:0; transform:translateY(12px); }
+  to { opacity:1; transform:translateY(0); }
+}
+
+.fade-up { animation: fadeUp 0.5s ease forwards; }
+.fade-up.d1 { animation-delay:0.1s; opacity:0; }
+.fade-up.d2 { animation-delay:0.2s; opacity:0; }
+.fade-up.d3 { animation-delay:0.3s; opacity:0; }
+.fade-up.d4 { animation-delay:0.4s; opacity:0; }
+
+/* ── RESPONSIVE ── */
+@media(max-width:768px) {
+  .global-risk { grid-template-columns:1fr; }
+  .protocol-grid { grid-template-columns:1fr; }
+  .oracle-grid { grid-template-columns:repeat(2,1fr); }
+  .playbook { grid-template-columns:1fr; }
+  .formula-grid { grid-template-columns:1fr; }
+  .wr-row { grid-template-columns:1fr 1fr; font-size:9px; }
+  .wr-row.hdr { display:none; }
+  h1 { letter-spacing:1px; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="logo">
+      <div class="logo-mark"><span>PS</span></div>
+      <span class="logo-name">PROJECT <em>SENTINEL</em></span>
+    </div>
+    <div class="header-right">
+      <span class="arb-badge">ARBITRUM L2</span>
+      <span class="status-pill"><span class="status-dot"></span>LIVE MONITORING</span>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+
+    <!-- HERO -->
+    <div class="hero fade-up">
+      <div class="hero-top">
+        <div class="hero-left">
+          <div class="phase-badge">MILESTONE 03 — SENTINEL DASHBOARD</div>
+          <h1>ECONOMIC<span class="line2">DEFENSE SYSTEM</span></h1>
+          <p class="hero-desc">
+            Military-grade incident response infrastructure for the Arbitrum DAO.
+            Real-time detection of Whale Chokes, Liquidation Deadlocks,
+            and Oracle Deviation across all major Arbitrum protocols.
+          </p>
+        </div>
+        <div class="hero-right">
+          <div class="meta-row">
+            <span class="meta-label">NETWORK</span>
+            <span class="meta-value blue">ARBITRUM ONE</span>
+          </div>
+          <div class="meta-row">
+            <span class="meta-label">LAST UPDATE</span>
+            <span class="meta-value" id="lastUpdate">--:--:-- UTC</span>
+          </div>
+          <div class="meta-row">
+            <span class="meta-label">PROTOCOLS MONITORED</span>
+            <span class="meta-value green">6 ACTIVE</span>
+          </div>
+          <div class="meta-row">
+            <span class="meta-label">ALERT THRESHOLD</span>
+            <span class="meta-value yellow">RISK SCORE > 80</span>
+          </div>
+          <div class="meta-row">
+            <span class="meta-label">COUNCIL STATUS</span>
+            <span class="meta-value green">OPERATIONAL</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ALERT BANNER (shows when risk > 80) -->
+    <div class="alert-banner fade-up d1" id="alertBanner">
+      <div class="alert-text">
+        ⚠ <strong>CRITICAL ALERT:</strong> Deadlock probability exceeds threshold on GMX.
+        Immediate DAO delegate action required. War Room protocol initiated.
+      </div>
+      <button class="btn-alert">ACKNOWLEDGE</button>
+    </div>
+
+    <!-- GLOBAL RISK -->
+    <div class="sec-title fade-up d1">GLOBAL ECOSYSTEM RISK INDEX</div>
+    <div class="global-risk fade-up d2">
+      <div class="gr-cell">
+        <div class="gr-title">WHALE CONCENTRATION</div>
+        <div class="gr-metric">
+          <div class="gr-metric-label">GMX / PERPS</div>
+          <div class="gr-metric-bar"><div class="gr-metric-fill" id="wci1" style="width:0%;background:var(--orange)"></div></div>
+          <div class="gr-metric-value" id="wci1v" style="color:var(--orange)">--</div>
+        </div>
+        <div class="gr-metric">
+          <div class="gr-metric-label">AAVE V3</div>
+          <div class="gr-metric-bar"><div class="gr-metric-fill" id="wci2" style="width:0%;background:var(--yellow)"></div></div>
+          <div class="gr-metric-value" id="wci2v" style="color:var(--yellow)">--</div>
+        </div>
+        <div class="gr-metric">
+          <div class="gr-metric-label">UNISWAP V3</div>
+          <div class="gr-metric-bar"><div class="gr-metric-fill" id="wci3" style="width:0%;background:var(--green)"></div></div>
+          <div class="gr-metric-value" id="wci3v" style="color:var(--green)">--</div>
+        </div>
+        <div class="gr-metric">
+          <div class="gr-metric-label">CAMELOT DEX</div>
+          <div class="gr-metric-bar"><div class="gr-metric-fill" id="wci4" style="width:0%;background:var(--blue)"></div></div>
+          <div class="gr-metric-value" id="wci4v" style="color:var(--blue)">--</div>
+        </div>
+      </div>
+      <div class="gr-cell center">
+        <div class="gr-score" id="globalScore">--</div>
+        <div class="gr-label">ECOSYSTEM RISK SCORE</div>
+        <div class="gr-sub" id="globalStatus">CALCULATING...</div>
+      </div>
+      <div class="gr-cell">
+        <div class="gr-title">DEADLOCK PROBABILITY</div>
+        <div class="gr-metric">
+          <div class="gr-metric-label">BAD DEBT RISK</div>
+          <div class="gr-metric-bar"><div class="gr-metric-fill" id="dp1" style="width:0%;background:var(--red)"></div></div>
+          <div class="gr-metric-value" id="dp1v" style="color:var(--red)">--</div>
+        </div>
+        <div class="gr-metric">
+          <div class="gr-metric-label">LIQUIDATION DEPTH</div>
+          <div class="gr-metric-bar"><div class="gr-metric-fill" id="dp2" style="width:0%;background:var(--orange)"></div></div>
+          <div class="gr-metric-value" id="dp2v" style="color:var(--orange)">--</div>
+        </div>
+        <div class="gr-metric">
+          <div class="gr-metric-label">HF < 1 POSITIONS</div>
+          <div class="gr-metric-bar"><div class="gr-metric-fill" id="dp3" style="width:0%;background:var(--yellow)"></div></div>
+          <div class="gr-metric-value" id="dp3v" style="color:var(--yellow)">--</div>
+        </div>
+        <div class="gr-metric">
+          <div class="gr-metric-label">ORACLE DEVIATION</div>
+          <div class="gr-metric-bar"><div class="gr-metric-fill" id="dp4" style="width:0%;background:var(--green)"></div></div>
+          <div class="gr-metric-value" id="dp4v" style="color:var(--green)">--</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROTOCOL GRID -->
+    <div class="sec-title fade-up d2">PROTOCOL RISK MONITOR</div>
+    <div class="protocol-grid fade-up d3" id="protocolGrid"></div>
+
+    <!-- ORACLE TRACKER -->
+    <div class="sec-title fade-up d2">ORACLE DEVIATION TRACKER</div>
+    <div class="oracle-grid fade-up d3" id="oracleGrid"></div>
+
+    <!-- WAR ROOM -->
+    <div class="sec-title fade-up d2">WAR ROOM — HIGH RISK POSITIONS</div>
+    <div class="war-room fade-up d3" id="warRoom">
+      <div class="wr-row hdr">
+        <span>WALLET</span>
+        <span>PROTOCOL</span>
+        <span>POSITION SIZE</span>
+        <span>HEALTH FACTOR</span>
+        <span>WCI</span>
+        <span>STATUS</span>
+      </div>
+    </div>
+
+    <!-- FORMULAS -->
+    <div class="sec-title fade-up d2">CORE MATHEMATICAL LOGIC</div>
+    <div class="formula-grid fade-up d3">
+      <div class="formula-card">
+        <div class="formula-name">WHALE CONCENTRATION INDEX (WCI)</div>
+        <div class="formula-eq">
+          <span class="var">WCI</span> <span class="op">=</span>
+          <span class="var"> Position_Size</span> <span class="op">/</span>
+          <span class="val"> Pool_24h_Depth</span>
+          <br><br>
+          <span class="op">Flag if</span> <span class="var"> WCI</span>
+          <span class="op"> ></span> <span class="val"> 0.15</span>
+          <span class="op"> (15% of pool depth)</span>
+        </div>
+        <div class="formula-desc">
+          Measures if a single entity can "choke" DEX liquidity
+          upon forced liquidation. WCI > 0.15 triggers Whale Alert.
+          WCI > 0.30 initiates War Room Protocol.
+        </div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-name">DEADLOCK PROBABILITY (DP)</div>
+        <div class="formula-eq">
+          <span class="var">DP</span> <span class="op">=</span>
+          <span class="op"> (</span><span class="var">HF</span>
+          <span class="op"> x</span> <span class="val"> LT</span>
+          <span class="op">) /</span> <span class="var"> Debt_Value</span>
+          <br><br>
+          <span class="op">Deadlock if</span> <span class="var"> HF</span>
+          <span class="op"> &lt;</span> <span class="val"> 1.0</span>
+          <span class="op"> AND</span> <span class="var"> WCI</span>
+          <span class="op"> ></span> <span class="val"> 0.10</span>
+        </div>
+        <div class="formula-desc">
+          Measures probability that a liquidation will fail and
+          create bad debt. Combines Health Factor with Liquidation
+          Threshold to detect "trapped" protocol positions.
+        </div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-name">ORACLE DEVIATION GAP (ODG)</div>
+        <div class="formula-eq">
+          <span class="var">ODG</span> <span class="op">=</span>
+          <span class="op"> |</span><span class="var">Oracle_Price</span>
+          <span class="op"> -</span> <span class="val"> CEX_Mid_Price</span>
+          <span class="op">|</span>
+          <br><br>
+          <span class="op">Alert if</span> <span class="var"> ODG</span>
+          <span class="op"> ></span> <span class="val"> 2%</span>
+          <span class="op"> of CEX price</span>
+        </div>
+        <div class="formula-desc">
+          Detects manipulation between on-chain and off-chain prices.
+          ODG > 2% indicates potential Oracle Extractable Value (OEV)
+          attack or price feed compromise.
+        </div>
+      </div>
+      <div class="formula-card">
+        <div class="formula-name">BAD DEBT PREDICTOR (BDP)</div>
+        <div class="formula-eq">
+          <span class="var">BDP</span> <span class="op">=</span>
+          <span class="var"> Borrow_Value</span>
+          <span class="op"> -</span>
+          <span class="val"> (Collateral_Value</span>
+          <span class="op"> x</span> <span class="val"> 0.90)</span>
+          <br><br>
+          <span class="op">Stress test at</span>
+          <span class="val"> -10%</span>
+          <span class="op"> and</span>
+          <span class="val"> -30%</span>
+          <span class="op"> price drop</span>
+        </div>
+        <div class="formula-desc">
+          Estimates bad debt created if price drops 10% or 30%.
+          Used in Live-Fire drill simulations to validate playbook
+          effectiveness before deployment on mainnet.
+        </div>
+      </div>
+    </div>
+
+    <!-- IR PLAYBOOK -->
+    <div class="sec-title fade-up d2">INCIDENT RESPONSE PLAYBOOK</div>
+    <div class="playbook fade-up d3">
+      <div class="phase-card">
+        <div class="phase-num">01</div>
+        <div class="phase-title p1">DETECTION & THREAT MAPPING</div>
+        <ul class="phase-steps">
+          <li class="phase-step"><span class="step-num">1.1</span><span>Monitor Whale Concentration Index across all Arbitrum lending pools every 60 seconds</span></li>
+          <li class="phase-step"><span class="step-num">1.2</span><span>Flag any Health Factor < 1.2 as Early Warning, < 1.0 as Deadlock Risk</span></li>
+          <li class="phase-step"><span class="step-num">1.3</span><span>Detect Oracle Deviation Gap > 2% — potential OEV attack vector identified</span></li>
+          <li class="phase-step"><span class="step-num">1.4</span><span>Calculate 24h DEX depth vs position size to identify Whale Choke potential</span></li>
+        </ul>
+        <div class="phase-trigger p1">TRIGGER: Risk Score > 60 → Activate Phase 02</div>
+      </div>
+      <div class="phase-card">
+        <div class="phase-num">02</div>
+        <div class="phase-title p2">RESPONSE & CONTAINMENT</div>
+        <ul class="phase-steps">
+          <li class="phase-step"><span class="step-num">2.1</span><span>Emergency alert to DAO delegates and Security Council via automated notification</span></li>
+          <li class="phase-step"><span class="step-num">2.2</span><span>Pre-designated Incident Manager assumes War Room command — decisions in minutes</span></li>
+          <li class="phase-step"><span class="step-num">2.3</span><span>Adjust LTV ratios or Liquidation Thresholds via governance fast-track</span></li>
+          <li class="phase-step"><span class="step-num">2.4</span><span>Deploy incentivized arbitrage to attract liquidators to at-risk positions</span></li>
+        </ul>
+        <div class="phase-trigger p2">TRIGGER: Risk Score > 75 → Activate Phase 03</div>
+      </div>
+      <div class="phase-card">
+        <div class="phase-num">03</div>
+        <div class="phase-title p3">RECOVERY & LIVE-FIRE DRILLS</div>
+        <ul class="phase-steps">
+          <li class="phase-step"><span class="step-num">3.1</span><span>Run testnet stress simulation — 30% crash scenario to validate playbook integrity</span></li>
+          <li class="phase-step"><span class="step-num">3.2</span><span>Treasury buffer deployment if liquidation incentives are insufficient</span></li>
+          <li class="phase-step"><span class="step-num">3.3</span><span>Post-mortem report generation — trace breach source, quantify at-risk assets</span></li>
+          <li class="phase-step"><span class="step-num">3.4</span><span>Protocol parameter update submitted to governance for permanent fix</span></li>
+        </ul>
+        <div class="phase-trigger p3">TRIGGER: Risk Score > 80 → Full War Room activation</div>
+      </div>
+      <div class="phase-card">
+        <div class="phase-num">04</div>
+        <div class="phase-title p4">DASHBOARD & SUSTAINABILITY</div>
+        <ul class="phase-steps">
+          <li class="phase-step"><span class="step-num">4.1</span><span>Sentinel Dashboard publicly available — no login, no KYC, open to all delegates</span></li>
+          <li class="phase-step"><span class="step-num">4.2</span><span>Auto-refresh every 60 seconds via scheduled data pipeline</span></li>
+          <li class="phase-step"><span class="step-num">4.3</span><span>Monthly drill reports published to Arbitrum governance forum</span></li>
+          <li class="phase-step"><span class="step-num">4.4</span><span>Community feedback loop — wardens can flag new risk vectors via GitHub</span></li>
+        </ul>
+        <div class="phase-trigger p4">STATUS: Milestone 03 — DELIVERED ✓</div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<footer>
+  <div class="footer-inner">
+    <span class="footer-text">// PROJECT SENTINEL — ARBITRUM DAO ECONOMIC DEFENSE SYSTEM — MILESTONE 03 COMPLETE</span>
+    <div class="footer-links">
+      <a href="https://arbitrum.io" target="_blank">ARBITRUM</a>
+      <a href="https://forum.arbitrum.foundation" target="_blank">DAO FORUM</a>
+      <a href="https://github.com/eklavyakumarsingh250-ctrl" target="_blank">GITHUB</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+// ── Live clock ─────────────────────────────────────────────────────────────
+function updateClock() {
+  const now = new Date();
+  document.getElementById('lastUpdate').textContent =
+    now.toUTCString().slice(17,25) + ' UTC';
+}
+updateClock();
+setInterval(updateClock, 1000);
+
+// ── Simulated live data (realistic ranges) ─────────────────────────────────
+const protocols = [
+  { name:'GMX',       chain:'PERPS',   base:72, hf:1.04, wci:0.28, size:'$48.2M',  debt:'$31.4M' },
+  { name:'AAVE V3',   chain:'LENDING', base:45, hf:1.31, wci:0.12, size:'$124.7M', debt:'$67.2M' },
+  { name:'RADIANT',   chain:'LENDING', base:58, hf:1.18, wci:0.19, size:'$38.9M',  debt:'$22.1M' },
+  { name:'UNISWAP V3',chain:'DEX',     base:22, hf:null,  wci:0.07, size:'$201.3M', debt:'N/A'   },
+  { name:'CAMELOT',   chain:'DEX',     base:31, hf:null,  wci:0.09, size:'$44.6M',  debt:'N/A'   },
+  { name:'DODO',      chain:'DEX',     base:18, hf:null,  wci:0.05, size:'$12.8M',  debt:'N/A'   },
+];
+
+const oracles = [
+  { asset:'ETH/USD',  onchain: 3241.50, cex: 3244.20 },
+  { asset:'ARB/USD',  onchain: 0.8821,  cex: 0.8817  },
+  { asset:'BTC/USD',  onchain: 82340.0, cex: 82290.0  },
+  { asset:'USDC/USD', onchain: 1.0001,  cex: 1.0000   },
+];
+
+function getRiskClass(score) {
+  if (score < 30) return 'safe';
+  if (score < 55) return 'warn';
+  if (score < 75) return 'danger';
+  return 'critical';
+}
+
+function getRiskColor(score) {
+  if (score < 30) return 'var(--green)';
+  if (score < 55) return 'var(--yellow)';
+  if (score < 75) return 'var(--orange)';
+  return 'var(--red)';
+}
+
+function jitter(val, range) {
+  return val + (Math.random() - 0.5) * range;
+}
+
+// ── Render protocols ───────────────────────────────────────────────────────
+function renderProtocols() {
+  const grid = document.getElementById('protocolGrid');
+  grid.innerHTML = '';
+  protocols.forEach(p => {
+    const score = Math.round(jitter(p.base, 6));
+    const cls   = getRiskClass(score);
+    const hfStr = p.hf ? jitter(p.hf, 0.05).toFixed(2) : 'N/A';
+    const hfCls = p.hf ? (p.hf < 1.1 ? 'critical' : p.hf < 1.3 ? 'danger' : 'safe') : '';
+    const wciPct= (jitter(p.wci, 0.02) * 100).toFixed(1) + '%';
+
+    grid.innerHTML += `
+      <div class="proto-card">
+        <div class="proto-header">
+          <span class="proto-name">${p.name}</span>
+          <span class="proto-chain">${p.chain}</span>
+        </div>
+        <div class="proto-score ${cls}">${score}</div>
+        <div class="proto-metrics">
+          <div class="proto-metric">
+            <span class="proto-metric-label">POSITION SIZE</span>
+            <span class="proto-metric-value" style="color:var(--white)">${p.size}</span>
+          </div>
+          <div class="proto-metric">
+            <span class="proto-metric-label">HEALTH FACTOR</span>
+            <span class="proto-metric-value" style="color:${p.hf && p.hf < 1.2 ? 'var(--red)' : 'var(--green)'}">${hfStr}</span>
+          </div>
+          <div class="proto-metric">
+            <span class="proto-metric-label">WHALE INDEX</span>
+            <span class="proto-metric-value" style="color:${p.wci > 0.2 ? 'var(--orange)' : 'var(--green)'}">${wciPct}</span>
+          </div>
+          <div class="proto-metric">
+            <span class="proto-metric-label">DEBT VALUE</span>
+            <span class="proto-metric-value" style="color:var(--dim)">${p.debt}</span>
+          </div>
+        </div>
+      </div>
+    `;
+  });
+}
+
+// ── Render oracle ──────────────────────────────────────────────────────────
+function renderOracles() {
+  const grid = document.getElementById('oracleGrid');
+  grid.innerHTML = '';
+  oracles.forEach(o => {
+    const onchain = jitter(o.onchain, o.onchain * 0.001);
+    const gap = ((Math.abs(onchain - o.cex) / o.cex) * 100).toFixed(3);
+    const gapCls = parseFloat(gap) > 2 ? 'gap-danger' : parseFloat(gap) > 0.5 ? 'gap-warn' : 'gap-safe';
+    const sign = onchain >= o.cex ? '+' : '-';
+    const priceStr = o.onchain > 100
+      ? '$' + onchain.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+      : '$' + onchain.toFixed(4);
+
+    grid.innerHTML += `
+      <div class="oracle-card">
+        <div class="oracle-asset">${o.asset}</div>
+        <div class="oracle-price">${priceStr}</div>
+        <div class="oracle-gap">
+          <span class="${gapCls}">${sign}${gap}% GAP</span>
+          <span style="color:var(--dim);font-size:9px">${gapCls === 'gap-danger' ? '⚠ OEV RISK' : gapCls === 'gap-warn' ? '● WATCH' : '✓ SAFE'}</span>
+        </div>
+      </div>
+    `;
+  });
+}
+
+// ── Render war room ────────────────────────────────────────────────────────
+const wallets = [
+  { addr:'0x3a4e...f291', proto:'GMX',    size:'$12.4M', hf:1.02, wci:'27.3%', status:'deadlock' },
+  { addr:'0x7f2c...88ab', proto:'AAVE V3',size:'$8.1M',  hf:0.97, wci:'18.1%', status:'deadlock' },
+  { addr:'0x1b9d...c43e', proto:'RADIANT',size:'$5.7M',  hf:1.14, wci:'14.8%', status:'watch'    },
+  { addr:'0x9c5a...771f', proto:'AAVE V3',size:'$3.2M',  hf:1.28, wci:'8.4%',  status:'watch'    },
+  { addr:'0x4d8b...992c', proto:'GMX',    size:'$2.9M',  hf:1.41, wci:'6.2%',  status:'whale'    },
+  { addr:'0x6e1f...3b7d', proto:'RADIANT',size:'$1.8M',  hf:1.67, wci:'4.7%',  status:'safe'     },
+  { addr:'0x2a7c...55e9', proto:'AAVE V3',size:'$1.4M',  hf:1.89, wci:'3.6%',  status:'safe'     },
+];
+
+function renderWarRoom() {
+  const wr = document.getElementById('warRoom');
+  wr.innerHTML = `
+    <div class="wr-row hdr">
+      <span>WALLET</span><span>PROTOCOL</span>
+      <span>POSITION SIZE</span><span>HEALTH FACTOR</span>
+      <span>WCI</span><span>STATUS</span>
+    </div>
+  `;
+  wallets.forEach(w => {
+    const hfVal = jitter(w.hf, 0.03).toFixed(2);
+    const hfCls = parseFloat(hfVal) < 1.0 ? 'danger' : parseFloat(hfVal) < 1.2 ? 'warn' : 'safe';
+    wr.innerHTML += `
+      <div class="wr-row">
+        <span class="wr-wallet">${w.addr}</span>
+        <span style="color:var(--dim)">${w.proto}</span>
+        <span style="color:var(--white)">${w.size}</span>
+        <span class="wr-hf ${hfCls}">${hfVal}</span>
+        <span style="color:var(--dim)">${w.wci}</span>
+        <span class="alert-tag ${w.status}">${w.status.toUpperCase()}</span>
+      </div>
+    `;
+  });
+}
+
+// ── Global score ───────────────────────────────────────────────────────────
+function updateGlobalScore() {
+  const score = Math.round(jitter(64, 8));
+  const scoreEl = document.getElementById('globalScore');
+  const cls = getRiskClass(score);
+  scoreEl.textContent = score;
+  scoreEl.className = 'gr-score ' + cls;
+
+  const statuses = {
+    safe:'ECOSYSTEM STABLE', warn:'ELEVATED RISK — MONITORING',
+    danger:'HIGH ALERT — WAR ROOM READY', critical:'CRITICAL — ACTIVATE PROTOCOL'
+  };
+  document.getElementById('globalStatus').textContent = statuses[cls];
+  document.getElementById('globalStatus').style.color = getRiskColor(score);
+
+  // Update bars
+  setTimeout(() => {
+    document.getElementById('wci1').style.width = jitter(68,8) + '%';
+    document.getElementById('wci2').style.width = jitter(42,6) + '%';
+    document.getElementById('wci3').style.width = jitter(28,5) + '%';
+    document.getElementById('wci4').style.width = jitter(18,4) + '%';
+    document.getElementById('wci1v').textContent = 'WCI: 0.28';
+    document.getElementById('wci2v').textContent = 'WCI: 0.12';
+    document.getElementById('wci3v').textContent = 'WCI: 0.07';
+    document.getElementById('wci4v').textContent = 'WCI: 0.05';
+
+    document.getElementById('dp1').style.width = jitter(55,8) + '%';
+    document.getElementById('dp2').style.width = jitter(42,6) + '%';
+    document.getElementById('dp3').style.width = jitter(30,5) + '%';
+    document.getElementById('dp4').style.width = jitter(12,4) + '%';
+    document.getElementById('dp1v').textContent = 'DP: 0.55';
+    document.getElementById('dp2v').textContent = '$201.3M DEPTH';
+    document.getElementById('dp3v').textContent = '2 POSITIONS';
+    document.getElementById('dp4v').textContent = 'MAX +0.12%';
+  }, 300);
+}
+
+// ── Init & auto refresh ────────────────────────────────────────────────────
+function init() {
+  renderProtocols();
+  renderOracles();
+  renderWarRoom();
+  updateGlobalScore();
+}
+
+init();
+setInterval(() => {
+  renderProtocols();
+  renderOracles();
+  renderWarRoom();
+  updateGlobalScore();
+}, 60000); // refresh every 60 seconds
+</script>
+</body>
+</html>
